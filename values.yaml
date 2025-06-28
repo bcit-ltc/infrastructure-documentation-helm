@@ -1,0 +1,110 @@
+# Available parameters and their default values for the chart.
+#
+# Default values reflect the "Stable" (production) environment.
+
+# The namespace to deploy to. Defaults to the `helm` installation namespace.
+namespaces:
+  # Enable this to create namespaces
+  create: false
+  namespace:
+    - name: ""
+
+# Sets the repo and tag of the deployment.
+image:
+  repository: "bcit-ltc/infrastructure-documentation"
+  tag: "1.0.7"
+  pullPolicy: IfNotPresent
+
+# Number of pods to run for the deployment.
+replicas: 1
+
+# App port: target port used by the app in the container. Used to configure Deployment and Service resources.
+containerPort: 8080
+
+# Service port: port connecting ingress to the service.
+servicePort: 80
+
+# Number of seconds the Deployment controller waits before indicating that progress has stalled.
+progressDeadlineSeconds: 300
+
+# Number of old Deployment revisions to retain.
+revisionHistoryLimit: 2
+
+strategy:
+  # The strategy to use for the Deployment.
+  type: RollingUpdate
+  rollingUpdate:
+    # The maximum number of pods that can be created over the desired number of pods.
+    maxSurge: 25%
+    # The maximum number of pods that can be unavailable during the update.
+    maxUnavailable: 25%
+
+resources:
+  # For more information on configuring resources, see the K8s documentation:
+  # https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+  cpuRequest: "100m"
+  cpuLimit: "100m"
+  memRequest: "64Mi"
+  memLimit: "128Mi"
+
+ingress:
+  annotations: {}
+    # |
+    # kubernetes.io/tls-acme: "true"
+  ingressClassName: ""
+  # hosts:
+  #   - host: chart-example.local
+  #     paths: []
+  tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+
+#####
+##### For later development #####
+#####
+
+# # @param serverBlock Custom server block to be added to NGINX configuration
+# # PHP-FPM example server block:
+# nginxConfig: |-
+#   server {
+#     listen 0.0.0.0:8080;
+#     root /app;
+#     location / {
+#       index index.html index.php;
+#     }
+#     location ~ \.php$ {
+#       fastcgi_pass phpfpm-server:9000;
+#       fastcgi_index index.php;
+#       include fastcgi.conf;
+#     }
+#   }
+
+# # Image pull secret to use for registry authentication.
+# imagePullSecrets: []
+# # imagePullSecrets:
+# #   - name: image-pull-secret
+
+# # This configures a Statefulset to create a PVC for data
+# dataStorage:
+#   enabled: false
+#   size: 10Gi
+#   # Location where the PVC will be mounted.
+#   mountPath: "/app/data"
+
+  # # Security context for the pod template and the injector container
+  # # The default pod securityContext is:
+  # #   runAsNonRoot: true
+  # #   runAsGroup: {{ .Values.injector.gid | default 1000 }}
+  # #   runAsUser: {{ .Values.injector.uid | default 100 }}
+  # #   fsGroup: {{ .Values.injector.gid | default 1000 }}
+  # # and for container is
+  # #    readOnlyRootFilesystem: true
+  # #    allowPrivilegeEscalation: false
+  # #    capabilities:
+  # #      drop:
+  # #        - NET_RAW
+  # securityContext:
+  #   pod: {}
+  #   container: {}

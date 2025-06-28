@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "app.fullname" . }}
+  namespace: {{ include "app.namespace" . }}
+  labels:
+    app.kubernetes.io/name: {{ include "app.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+spec:
+  progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
+  replicas: {{ .Values.replicas }}
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ template "app.name" . }}
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  {{ template "app.strategy" . }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ template "app.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      serviceAccountName: {{ template "app.fullname" . }}
+      containers:
+        - name: {{ template "app.fullname" . }}
+          {{ template "app.resources" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: "{{ .Values.image.pullPolicy }}"
+          env:
+            - name: APP_NAME
+              value: {{ template "app.fullname" . }}
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+          volumeMounts:
+            - mountPath: /tmp
+              name: tmp
+            {{- if or .Values.nginxConfig }}
+            - mountPath: /etc/nginx/conf.d
+              name: nginx-config
+            {{- end }}
+      volumes:
+        - emptyDir: {}
+          name: tmp
+        {{- if or .Values.nginxConfig }}
+        - configMap:
+          name: nginx-config
+        {{- end }}

@@ -1,28 +1,28 @@
 # Available parameters and their default values for the chart.
 #
-# Default values reflect the "Stable" (production) environment.
-
-# The namespace to deploy to. Defaults to the `helm` installation namespace.
-namespaces:
-  # Enable this to create namespaces
-  create: false
-  namespace:
-    - name: ""
+# Default values reflect the "stable" (production) environment.
 
 # Sets the repo and tag of the deployment.
 image:
-  repository: "bcit-ltc/infrastructure-documentation"
+  repository: "ghcr.io/bcit-ltc/infrastructure-documentation"
   tag: "1.0.7"
   pullPolicy: IfNotPresent
+  # pullSecrets:
+  #   - name: myregistry-secret
+
+# The organization domain.
+defaultDomain: "ltc.bcit.ca"
 
 # Number of pods to run for the deployment.
 replicas: 1
 
-# App port: target port used by the app in the container. Used to configure Deployment and Service resources.
-containerPort: 8080
+# Target port used by the app in the container. Used to configure Deployment and Service resources.
+container:
+  port: 8080
 
-# Service port: port connecting ingress to the service.
-servicePort: 80
+# Port connecting ingress to the service.
+service:
+  port: 80
 
 # Number of seconds the Deployment controller waits before indicating that progress has stalled.
 progressDeadlineSeconds: 300
@@ -47,44 +47,46 @@ resources:
   memRequest: "64Mi"
   memLimit: "128Mi"
 
+serviceAccountName: ""
+
+# podAnnotations:
+#   prometheus.io/scrape: "true"
+
+# extraEnv:
+#   - name: FOO
+#     value: bar
+
+# readinessProbe:
+#   httpGet:
+#     path: /
+#     port: 8080
+#   initialDelaySeconds: 5
+#   periodSeconds: 10
+
+# livenessProbe:
+#   httpGet:
+#     path: /
+#     port: 8080
+#   initialDelaySeconds: 15
+#   periodSeconds: 20
+
 ingress:
   annotations: {}
     # |
     # kubernetes.io/tls-acme: "true"
-  ingressClassName: ""
-  # hosts:
-  #   - host: chart-example.local
-  #     paths: []
-  tls: []
-    #  - secretName: chart-example-tls
-    #    hosts:
-    #      - chart-example.local
-
+  host: ""                        # Optional, defaults to app.fullname
+  tlsSecret: "star-ltc-bcit-ca"   # Defaults to app.fullname; prefixed with app.fullname.
+  paths:                          # Optional, defaults to ["/"]
+    # - path: /*
+    #   backend:
+    #     service:
+    #       name: "service-name"
+    #       port:
+    #         number: use-annotation
 
 #####
 ##### For later development #####
 #####
-
-# # @param serverBlock Custom server block to be added to NGINX configuration
-# # PHP-FPM example server block:
-# nginxConfig: |-
-#   server {
-#     listen 0.0.0.0:8080;
-#     root /app;
-#     location / {
-#       index index.html index.php;
-#     }
-#     location ~ \.php$ {
-#       fastcgi_pass phpfpm-server:9000;
-#       fastcgi_index index.php;
-#       include fastcgi.conf;
-#     }
-#   }
-
-# # Image pull secret to use for registry authentication.
-# imagePullSecrets: []
-# # imagePullSecrets:
-# #   - name: image-pull-secret
 
 # # This configures a Statefulset to create a PVC for data
 # dataStorage:
@@ -108,3 +110,4 @@ ingress:
   # securityContext:
   #   pod: {}
   #   container: {}
+

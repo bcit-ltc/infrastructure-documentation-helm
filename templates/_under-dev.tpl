@@ -1,21 +1,4 @@
 # {{/*
-# imagePullSecrets generates pull secrets from either string or map values.
-# A map value must be indexable by the key 'name'.
-# */}}
-# {{- define "imagePullSecrets" -}}
-# {{- with .Values.imagePullSecrets -}}
-# imagePullSecrets:
-# {{- range . -}}
-# {{- if typeIs "string" . }}
-#   - name: {{ . }}
-# {{- else if index . "name" }}
-#   - name: {{ .name }}
-# {{- end }}
-# {{- end -}}
-# {{- end -}}
-# {{- end -}}
-
-# {{/*
 # securityContext for the pod level.
 # */}}
 # {{- define "securityContext.pod" -}}

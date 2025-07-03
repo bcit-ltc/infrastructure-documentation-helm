@@ -22,6 +22,7 @@ container:
 
 # Port connecting ingress to the service.
 service:
+  type: ClusterIP
   port: 80
 
 # Number of seconds the Deployment controller waits before indicating that progress has stalled.
@@ -74,15 +75,15 @@ ingress:
   annotations: {}
     # |
     # kubernetes.io/tls-acme: "true"
-  host: ""                        # Optional, defaults to app.fullname
-  tlsSecret: "star-ltc-bcit-ca"   # Defaults to app.fullname; prefixed with app.fullname.
-  paths:                          # Optional, defaults to ["/"]
-    # - path: /*
-    #   backend:
-    #     service:
-    #       name: "service-name"
-    #       port:
-    #         number: use-annotation
+  host: ""          # Optional, defaults to app.name
+  tlsSecret: ""     # Defaults to appName.star.ltc.bcit.ca; prefixed with app.name.
+  # extraPaths:     # Optional
+  #   - path: /api
+  #     backend:
+  #       service:
+  #         name: api-service
+  #         port:
+  #           number: 3000
 
 #####
 ##### For later development #####

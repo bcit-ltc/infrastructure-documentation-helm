@@ -1,12 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "app.fullname" . }}-deployment
-  namespace: {{ .Release.Namespace }}
+  name: {{ include "app.name" . }}-deployment
   labels:
-    app.kubernetes.io/name: {{ include "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
   progressDeadlineSeconds: {{ .Values.progressDeadlineSeconds }}
   replicas: {{ .Values.replicas }}
@@ -30,9 +27,9 @@ spec:
       imagePullSecrets:
         {{- toYaml .Values.image.pullSecrets | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ .Values.serviceAccountName | default (include "app.fullname" .) }}
+      serviceAccountName: {{ .Values.serviceAccountName | default (include "app.name" .) }}
       containers:
-        - name: {{ include "app.fullname" . }}
+        - name: {{ include "app.name" . }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: "{{ .Values.image.pullPolicy }}"
           {{ include "app.resources" . }}
@@ -41,7 +38,7 @@ spec:
               name: http
           env:
             - name: APP_NAME
-              value: {{ include "app.fullname" . }}
+              value: {{ include "app.name" . }}
             - name: POD_NAME
               valueFrom:
                 fieldRef:

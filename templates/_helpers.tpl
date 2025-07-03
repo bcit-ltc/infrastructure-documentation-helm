@@ -1,4 +1,11 @@
 {{/*
+Expand the name of the chart.
+*/}}
+{{- define "app.name" -}}
+{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" | lower -}}
+{{- end -}}
+
+{{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to
 this (by the DNS naming spec). If release name contains chart name it will
@@ -25,18 +32,34 @@ Create chart name and version as used by the chart label.
 {{- end -}}
 
 {{/*
-Expand the name of the chart.
+Common labels
 */}}
-{{- define "app.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" | lower -}}
-{{- end -}}
+{{- define "app.labels" -}}
+{{ include "app.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
 
 {{/*
-Allow the release namespace to be overridden
+Selector labels
 */}}
-{{- define "app.namespace" -}}
-{{- default .Release.Namespace .Values.namespace -}}
-{{- end -}}
+{{- define "app.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "app.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "app.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "app.name" .) .Values.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.serviceAccount.name }}
+{{- end }}
+{{- end }}
 
 {{/*
 Set's the container resources if the user has set any.

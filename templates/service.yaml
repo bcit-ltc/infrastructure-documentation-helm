@@ -1,18 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ template "app.fullname" . }}-service
-  namespace: {{ .Release.Namespace }}
+  name: {{ template "app.name" . }}-service
   labels:
-    app.kubernetes.io/name: {{ include "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    {{- include "app.labels" . | nindent 4 }}
 spec:
+  type: {{ .Values.service.type }}
   ports:
-    - name: http
-      protocol: TCP
-      port: {{ .Values.service.port }}
+    - port: {{ .Values.service.port }}
       targetPort: {{ .Values.container.port }}
+      protocol: TCP
+      name: http
   selector:
-    app.kubernetes.io/name: {{ template "app.name" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
+    {{- include "qcon-api.selectorLabels" . | nindent 4 }}
+

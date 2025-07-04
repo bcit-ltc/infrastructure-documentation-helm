@@ -1,7 +1,7 @@
 apiVersion: v2
 name: infrastructure-documentation
 description: Information about the architecture and makeup of the LTC's server infrastructure.
-version: 1.0.0
+version: 1.0.1
 appVersion: "1.0.7"
 maintainers:
   - name: BCIT LTC
@@ -9,3 +9,4 @@ maintainers:
     url: https://www.bcit.ca/learning-teaching-centre/
 sources:
   - https://github.com/bcit-ltc/
+icon: https://course-production.ltc.bcit.ca/favicon.ico

@@ -1,8 +1,8 @@
-# Infrastructure-Documentation
+# infrastructure-documentation
 
 Information about the architecture and makeup of the LTC's server infrastructure.
 
-![Version: 1.0.0](https://img.shields.io/badge/Version-1.0.0-informational?style=flat-square) ![AppVersion: 1.0.7](https://img.shields.io/badge/AppVersion-1.0.7-informational?style=flat-square)
+![Version: 1.0.1](https://img.shields.io/badge/Version-1.0.1-informational?style=flat-square) ![AppVersion: 1.0.7](https://img.shields.io/badge/AppVersion-1.0.7-informational?style=flat-square)
 
 Information about the architecture and makeup of the LTC's server infrastructure.
 
@@ -14,7 +14,7 @@ Information about the architecture and makeup of the LTC's server infrastructure
 
 ## Installing the Chart
 
-Our registry images are public, but [GitHub's "Working with Container Registries"](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) says:
+Our registry images are public, but in ["Working with Container Registries"](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry), GitHub says:
 > "You need an access token to publish, install, and delete private, internal, and public packages."
 
 1. Create a [GitHub personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) and set it in your terminal shell:
@@ -33,14 +33,14 @@ Our registry images are public, but [GitHub's "Working with Container Registries
         -H "Accept: application/vnd.github+json" \
         -H "Authorization: Bearer $CR_PAT" \
         -H "X-GitHub-Api-Version: 2022-11-28" \
-        <https://api.github.com/orgs/bcit-ltc/packages/container/infrastructure-documentation/versions> \
+        https://api.github.com/orgs/bcit-ltc/packages/container/oci/infrastructure-documentation/versions \
         | jq '.[].metadata.container.tags.[]'
 
-5. Pull and inspect the `bcit-ltc/infrastructure-documentation` helm chart:
+5. Pull and inspect the helm chart:
 
         helm pull --untar oci://ghcr.io/bcit-ltc/infrastructure-documentation --version {VERSION}
 
-6. Install the `infrastructure-documentation` chart:
+6. Install the chart:
 
         helm install infrastructure-documentation .
 
@@ -53,22 +53,33 @@ Our registry images are public, but [GitHub's "Working with Container Registries
 | image.pullPolicy | string | `"IfNotPresent"` |  |
 | image.repository | string | `"ghcr.io/bcit-ltc/infrastructure-documentation"` |  |
 | image.tag | string | `"1.0.7"` |  |
+| imagePullSecrets | list | `[]` |  |
 | ingress.annotations | object | `{}` |  |
 | ingress.host | string | `""` |  |
-| ingress.paths | string | `nil` |  |
-| ingress.tlsSecret | string | `"star-ltc-bcit-ca"` |  |
+| ingress.tlsSecret | string | `""` |  |
+| podSecurityContext | object | `{}` |  |
 | progressDeadlineSeconds | int | `300` |  |
-| replicas | int | `1` |  |
+| replicaCount | int | `1` |  |
 | resources.cpuLimit | string | `"100m"` |  |
 | resources.cpuRequest | string | `"100m"` |  |
 | resources.memLimit | string | `"128Mi"` |  |
 | resources.memRequest | string | `"64Mi"` |  |
 | revisionHistoryLimit | int | `2` |  |
+| securityContext | object | `{}` |  |
 | service.port | int | `80` |  |
-| serviceAccountName | string | `""` |  |
-| strategy.rollingUpdate.maxSurge | string | `"25%"` |  |
-| strategy.rollingUpdate.maxUnavailable | string | `"25%"` |  |
-| strategy.type | string | `"RollingUpdate"` |  |
+| service.type | string | `"ClusterIP"` |  |
+| serviceAccount.annotations | object | `{}` |  |
+| serviceAccount.automount | bool | `true` |  |
+| serviceAccount.create | bool | `true` |  |
+| serviceAccount.name | string | `""` |  |
+| volumeMounts[0].mountPath | string | `"/tmp"` |  |
+| volumeMounts[0].name | string | `"tmp"` |  |
+| volumeMounts[1].mountPath | string | `"/etc/nginx/conf.d"` |  |
+| volumeMounts[1].name | string | `"nginx-config"` |  |
+| volumes[0].emptyDir | object | `{}` |  |
+| volumes[0].name | string | `"tmp"` |  |
+| volumes[1].configMap.name | string | `"nginx-config"` |  |
+| volumes[1].name | string | `"nginx-config"` |  |
 
 ## Building this README.md
 

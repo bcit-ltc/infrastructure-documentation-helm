@@ -1,16 +1,21 @@
-# Default values reflect the "stable" (production) environment.
+# Special app-specific values
+# api:
+#   name: "api"
+#   url: "https://app.ltc.bcit.ca/api"
+
+# Common default values reflect the "stable" (production) environment.
+name: "infrastructure-documentation"
 
 # Sets the repo and tag of the deployment.
 image:
   repository: "ghcr.io/bcit-ltc/infrastructure-documentation"
   tag: "1.0.7"
   pullPolicy: IfNotPresent
-  # pullSecrets:
-  #   - name: myregistry-secret
 
 # This is for the secrets for pulling an image from a private repository.
 # See: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
+  # - name: myregistry-secret
 
 # The organization domain.
 defaultDomain: "ltc.bcit.ca"
@@ -46,7 +51,6 @@ serviceAccount:
   # Automatically mount a ServiceAccount's API credentials?
   automount: true
   annotations: {}
-  # The name of the service account to use.
   # If not set and create is true, a name is generated using the app.name template
   name: ""
 

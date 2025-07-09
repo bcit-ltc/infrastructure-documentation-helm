@@ -113,7 +113,6 @@ podSecurityContext: {}
 #####
 ##### For later development #####
 #####
-
 # # This configures a Statefulset to create a PVC for data
 # dataStorage:
 #   enabled: false
